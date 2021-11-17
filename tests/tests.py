@@ -1,10 +1,10 @@
-from domain.domain import *
+
 from logic.logic import *
 
 
 def test_all():
     test_add_transaction()
-    test_undo()
+    test_undo_redo()
     test_change_genre()
     test_get_each_min_price()
     test_get_ordered_list()
@@ -34,7 +34,7 @@ def test_add_transaction():
     assert get_lista_curenta(librarie) == [create_transaction(1, 'dss', 'dsdsd', 0.9, 'gold')]
 
 
-def test_undo():
+def test_undo_redo():
     librarie = create_librarie()
     add_transaction(get_lista_curenta(librarie),65,'awfda', 'afaddf', 34, 'gold')
     save_transactions_list(librarie)
@@ -43,10 +43,20 @@ def test_undo():
     add_transaction(get_lista_curenta(librarie),57,'tregs','sgsdg', 23, 'silver')
     save_transactions_list(librarie)
 
+    change_genre(get_lista_curenta(librarie), 65, 'newg')
+    save_transactions_list(librarie)
+
     undo_operation(librarie)
 
     assert get_lista_curenta(librarie) == [create_transaction(65,'awfda', 'afaddf', 30.6, 'gold'),
-                                           create_transaction(46, 'shfhd', 'jsqea', 39.9, 'silver')]
+                                           create_transaction(46, 'shfhd', 'jsqea', 39.9, 'silver'),
+                                           create_transaction(57,'tregs','sgsdg', 21.85, 'silver')]
+
+    redo_operation(librarie)
+
+    assert get_lista_curenta(librarie) == [create_transaction(65, 'awfda', 'newg', 30.6, 'gold'),
+                                           create_transaction(46, 'shfhd', 'jsqea', 39.9, 'silver'),
+                                           create_transaction(57, 'tregs', 'sgsdg', 21.85, 'silver')]
 
 
 def test_change_genre():
@@ -126,6 +136,10 @@ def test_delete_transaction():
     assert get_lista_curenta(librarie) == [create_transaction(65, 'awfda', 'afaddf', 30.6, 'gold'),
                                            create_transaction(54, 'awf', 'afaddf', 30, 'none'),
                                            create_transaction(12, 'fda', 'afaddf', 38, 'silver')
+
+
+
+
                                             ]
 
 
